@@ -149,18 +149,24 @@ This paper presents a new algorithm to reconstruct the incident light field in M
 \section{Light Field Sampling}
 We assume the direct illumination is computed separately, and omit it in the algorithm description. 
 
-The radiance $L$ from point $\bfp$ to the camera $\bfc$ can be computed by the following integral over a hemisphere of the incident directions:
+The radiance $L$ from point $\bfp$ to the camera $\bfc$ can be computed by the following integral over all incident directions:
 \Equation{\nonumber
-	L(\bfp\rightarrow \bfc) = \frac{1}{\pi} \int_H L(\bfp \leftarrow \omega) f_r(\bfp, \omega_\bfc \leftarrow \omega) \cos\theta \bfd\omega,
+	L_o(\bfp) = \frac{1}{\pi} \int L(\bfp, \omega) f_r(\bfp, \omega_\bfc, \omega) \cos\theta \bfd\omega,
 }
 where $L(\bfp \leftarrow \omega)$ is the incident light at point $p$ from direction $\omega$, $\omega_\bfc$ is the reflection direction (i.e, the direction from $\bfp$ to $\bfc$), $f_r(\bfp,\omega_\bfc\leftarrow\omega)$ is the BRDF at point $p$.
 
+Since the reflection distributions of most materials have a shape similar to phong lobe, we re-parameterize the incident direction $\omega$ using the reflection vector of $\bfp\rightarrow\bfc$, i.e., the elevation angle of the incident direction changes to the angle between $\omega$ and the reflection vector. In this way, the incident light with the equal elevation angle will have similar importance, and helps the sampling scheme for the incident light field  in turn (see \refSec{sec:sampling}).
 
-Suppose that the hemisphere of the incident direction is divided into a set of disjoint subsets: $H = \bigcup_i S_i$, and let 
-$$L_i = \frac{1}{\pi} \int_{S_i} L(\bfp \leftarrow \omega) f_r(\bfp, \omega_\bfc \leftarrow \omega) \cos\theta \bfd\omega, $$ then we have:
+Suppose that the hemisphere of the incident direction is divided into a set of disjoint subsets: $H = \bigcup_i B_i$, and let 
+$$L_{o,i} = \frac{1}{\pi} \int_{B_i} L(\bfp \leftarrow \omega) f_r(\bfp, \omega_\bfc \leftarrow \omega) \cos\theta \bfd\omega, $$ then we have:
 \Equation{\nonumber
-	L(\bfp\rightarrow\bfc)=\sum_i L_i.
+	L_o(\bfp\rightarrow\bfc)=\sum_i L_{o,i}.
 }
+
+
+
+\paragraph{Parameterization}
+
 
 \paragraph{Light Field Sampling}
 For two different points $\bfp_1$ and $\bfp_2$, the incident light $L(\bfp_1,\omega)$ and$L(\bfp_2,\omega)$ may be not parallel as the direction parameter $\omega$ are in the points' local coordinate frame.
