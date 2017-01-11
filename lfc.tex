@@ -15,6 +15,9 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{color}
+\usepackage{algorithm2e}
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
 
 %%% user defined command
 \newcommand{\bfd}{{\bf d}}
@@ -143,7 +146,7 @@ This paper presents a new algorithm to reconstruct the incident light field in M
 \printcopyright
 
 \section{Introduction}
-
+As a long standing problem in global illumination,
 \section{Related Work}
 
 \section{Light Field Sampling}
@@ -155,13 +158,36 @@ The radiance $L$ from point $\bfp$ to the camera $\bfc$ can be computed by the f
 }
 where $L(\bfp \leftarrow \omega)$ is the incident light at point $p$ from direction $\omega$, $\omega_\bfc$ is the reflection direction (i.e, the direction from $\bfp$ to $\bfc$), $f_r(\bfp,\omega_\bfc\leftarrow\omega)$ is the BRDF at point $p$.
 
-Since the reflection distributions of most materials have a shape similar to phong lobe, we re-parameterize the incident direction $\omega$ using the reflection vector of $\bfp\rightarrow\bfc$, i.e., the elevation angle of the incident direction changes to the angle between $\omega$ and the reflection vector. In this way, the incident light with the equal elevation angle will have similar importance, and helps the sampling scheme for the incident light field  in turn (see \refSec{sec:sampling}).
-
-Suppose that the hemisphere of the incident direction is divided into a set of disjoint subsets: $H = \bigcup_i B_i$, and let 
-$$L_{o,i} = \frac{1}{\pi} \int_{B_i} L(\bfp \leftarrow \omega) f_r(\bfp, \omega_\bfc \leftarrow \omega) \cos\theta \bfd\omega, $$ then we have:
+Suppose that the hemisphere of the incident direction is divided into a set of disjoint subsets: $H = \bigcup_{j=1}^N B_j$, and let $L_{o,j}$ be the integrated illumination of the light passing through $B_i$, i.e.,
+$$L_{o,i} = \frac{1}{\pi} \int_{B_i} L(\bfp \leftarrow \omega) f_r(\bfp, \omega_\bfc \leftarrow \omega) \cos\theta \bfd\omega, $$ 
+then we have:
 \Equation{\nonumber
-	L_o(\bfp\rightarrow\bfc)=\sum_i L_{o,i}.
+	L_o(\bfp\rightarrow\bfc)=\sum_{i=1}^N L_{o,i}.
 }
+
+To compute the partial illumination result $L_{o,j}$, we can a path tracer, as illustrated as follows: 
+
+\begin{algorithm}[h]
+	\KwIn{$B_1\ldots B_N$ -- subdivided hemisphere blocks\;
+	~~~~~~~~~~~~$\bfp$ -- the surface point of a pixel\;
+	~~~~~~~~~~~~$m$ -- a sampling number for the incident rays\;}
+	\KwOut{$L_{o,1}\ldots L_{o,N}$ -- partial illuminations\; ~~~~~~~~~~~~~~~$\Omega(1)\ldots \Omega(N)$ -- sampling flags for blocks\; }
+	\For{$j \in [1\ldots n]$} 
+	{
+		$L_{o,j} \leftarrow 0$, ~~~~$\Omega(j)\leftarrow 0$
+	}
+	\For{ $k\in[1\ldots m]$ }
+	{
+		sample a random direction $\omega$ over the hemisphere with $f_r(p,\omega_c,\omega)\cos\theta$ as the pdf \;
+		generate a ray in direction $\omega$ \;
+		compute its incident radiance $L_{in}(\bfp,\omega)$ using path tracer \;
+		find the index $j$ that $\omega\in B_j$ \;
+		$L_{o,j} \leftarrow L_{o,j} + L_{in}(\bfp, \omega)$, ~~~~ $\Omega(j) \leftarrow 1$ \;
+	}
+	\caption{Sampling procedure for the partial illumination.}
+	\label{alg:sampling}
+\end{algorithm}
+
 
 
 
@@ -194,6 +220,7 @@ As the filter window is halved, the variance parameter $\sigma_{position}$ is mu
 
 \section{Implementation Details}
 
+Since the reflection distributions of most materials have a shape similar to phong lobe, we re-parameterize the incident direction $\omega$ using the reflection vector of $\bfp\rightarrow\bfc$, i.e., the elevation angle of the incident direction changes to the angle between $\omega$ and the reflection vector. In this way, the incident light with the equal elevation angle will have similar importance, and helps the sampling scheme for the incident light field  in turn (see \refSec{sec:sampling}).
 \section{Experimental Results}
 
 \section{Discussion}
@@ -223,3 +250,23 @@ The presented algorithm handles only indirect illumination, and leaves the direc
   \end{tabular}
 \end{table}
   
+	\begin{algorithm}[h]
+	\begin{algorithmic}[1]
+		\FORALL{ $j \in [1\ldots n]$ } 
+		\STATE $L_{o,j} \leftarrow 0$, $\Omega(j)\leftarrow 0$
+		\ENDFOR
+		\FORALL{ $k\in[1\ldots m]$ }
+		\STATE sample a random direction $\omega$ over the hemisphere with pdf $f_r(p,\omega_c,\omega)\cos\theta$.
+		\STATE sample the incident light from direction $\omega$ 
+		\STATE compute its radiance $L_{in}(\bfp,\omega)$ using path tracer.
+		\STATE find the index $j$ that $\omega\in B_j$.
+		\STATE $L_{o,j} \leftarrow L_{o,j} + L_in(\bfp, \omega)$
+		\STATE $\Omega(j) \leftarrow 1$
+		
+		\ENDFOR
+		\STATE 
+		\STATE repeat
+	\end{algorithmic}
+	\caption{Monte Carlo sampling of the partial illuminations.}
+	\label{alg:sampling:parital}
+\end{algorithm}
