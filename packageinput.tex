@@ -1,0 +1,64 @@
+%%% packages
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{color}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+%\usepackage{algorithm2e}
+% Use Input in the format of Algorithm
+%\renewcommand{\algorithmicrequire}{\textbf{Input:}}  
+% Use Output in the format of Algorithm
+%\renewcommand{\algorithmicensure}{\textbf{Output:}} 
+%%% user defined command
+\newcommand{\bfd}{{\bf d}}
+\newcommand{\bfp}{{\bf p}}
+\newcommand{\bfq}{{\bf q}}
+\newcommand{\bfc}{{\bf c}}
+\newcommand{\bfh}{{\bf h}}
+\newcommand{\bfo}{{\bf o}}
+\newcommand{\bfn}{{\bf n}}
+\newcommand{\bfv}{{\bf v}}
+
+\newcommand{\refEq}[1]{Equation \ref{#1}}
+\newcommand{\refSec}[1]{Section \ref{#1}}
+\newcommand{\refTab}[1]{Table \ref{#1}}
+\newcommand{\refFig}[1]{Figure \ref{#1}}
+\newcommand{\refFigs}[1]{Figures #1}
+
+\newcommand{\Ignore}[1]{}
+\newcommand{\XGTODO}[1]{\textcolor{red}{{\bf TODO (XGLiu):} #1}}
+
+\newcommand{\Equation}[1]{
+	\begin{equation}
+		#1
+	\end{equation}
+}
+
+\newcommand{\Figure}[3]{
+  \begin{figure}[thb]
+  \centering
+  {#2} % comment this line to skip images
+  \caption{#3}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\WideFigure}[3]{
+  \begin{figure*}[thb]
+  \centering
+  {#2} % comment this line to skip images
+  \caption{#3}
+  \label{#1}
+  \end{figure*}
+}
+
+\newcommand{\Table}[3]{
+  \begin{table}[thb]
+  \centering
+  {#2}
+  \caption{#3}
+  \label{#1}
+  \end{table}
+}
+
