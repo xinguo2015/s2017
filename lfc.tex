@@ -148,10 +148,16 @@ It is well-know that any matrix ${\bf X}\in\mathfrak{R}^{n\times m}$ can be writ
 }
 where $\{ {\bf M}_i\}$ is the set of all $n\times m$ rank-one matrices with unit Frobenius norm.
 
-The original low ran matrix approximation rpoblem aims to minimize the zero normal of $\theta$ subject to the constraint
+The original low rank matrix approximation problem aims to minimize the zero normal of $\theta$ subject to the constraint
 \begin{eqnarray}
 	& \min_{\boldsymbol\theta} \|\boldsymbol\theta\|_0 \\
-	s.t. & P_\Omega(\bf M(\boldsymbol\theta)) = P_\Omega(\bf X)
+	\texttt{s.t.} & P_\Omega(\bf M(\boldsymbol\theta)) = P_\Omega(\bf X)
+\end{eqnarray}
+
+The above problem can be reformulated as 
+\begin{eqnarray}
+	& \min_{\boldsymbol\theta} \|P_\Omega(\bf M(\boldsymbol\theta)) - P_\Omega(\bf X) \|_F^2 \\
+	\texttt{s.t.} & \|\boldsymbol\theta\|_0\leq r 
 \end{eqnarray}
 
 We filter the bases using cross-bilateral filters
